@@ -775,7 +775,7 @@ class Presence extends CI_Controller{
 			}
 		}
 
-		$formats = ['d-m-Y H:i:s', 'd/m/Y H:i:s', 'Y-m-d H:i:s'];
+		$formats = ['d-m-Y H:i:s', 'd/m/Y H:i:s', 'd/m/Y H.i.s', 'Y-m-d H:i:s'];
 		foreach($formats as $format){
 			$date = \DateTime::createFromFormat($format, $value);
 			if($date instanceof \DateTime){
@@ -1130,7 +1130,10 @@ class Presence extends CI_Controller{
 				$finger_ids[$finger_id] = $finger_id;
 				$logs[] = [
 					'finger_id' => $finger_id,
-					'datetime' => date('d-m-Y H:i:s', $timestamp),
+					'timestamp' => $timestamp,
+					'date' => date('Y-m-d', $timestamp),
+					'time' => date('H:i:s', $timestamp),
+					'datetime' => date('d/m/Y H.i.s', $timestamp),
 					'source' => $machine['sn']
 				];
 			}
@@ -1143,10 +1146,21 @@ class Presence extends CI_Controller{
 			];
 		}
 
+		usort($logs, function($a, $b){
+			$a_id = is_numeric($a['finger_id']) ? (int)$a['finger_id'] : $a['finger_id'];
+			$b_id = is_numeric($b['finger_id']) ? (int)$b['finger_id'] : $b['finger_id'];
+			if($a_id != $b_id){ return ($a_id < $b_id) ? -1 : 1; }
+			if($a['date'] != $b['date']){ return strcmp($a['date'], $b['date']); }
+			if($a['time'] != $b['time']){ return strcmp($a['time'], $b['time']); }
+			return strcmp($a['source'], $b['source']);
+		});
+
 		$employee_map = $this->_get_employee_map_by_finger(array_keys($finger_ids), $branch_id);
+		$branch = $this->branch->get_detail('branch.id', $branch_id)->row_array();
+		$department_name = !empty($branch) ? $branch['branch_name'] : 'TIFFANY HW';
 		$spreadsheet = new Spreadsheet();
 		$sheet = $spreadsheet->getActiveSheet();
-		$sheet_data = [['No', 'Nama', 'ID Fingerprint', 'Tanggal Jam Absen', 'Mesin']];
+		$sheet_data = [['Departemen', 'Nama', 'No.ID', 'Tgl/Waktu', 'Mesin']];
 		$sheet->fromArray($sheet_data[0], null, 'A1');
 
 		$row = 2;
@@ -1156,7 +1170,7 @@ class Presence extends CI_Controller{
 			$employee = isset($employee_map[$log['finger_id']]) ? $employee_map[$log['finger_id']] : null;
 			$name = !empty($employee) ? $employee['first_name'] : 'TIDAK DITEMUKAN';
 			if(!empty($employee)){ $mapped_rows++; }else{ $missing_rows++; }
-			$sheet_row = [$index + 1, $name, $log['finger_id'], $log['datetime'], $log['source']];
+			$sheet_row = [$department_name, $name, $log['finger_id'], $log['datetime'], $log['source']];
 			$sheet_data[] = $sheet_row;
 			$sheet->setCellValue('A'.$row, $sheet_row[0]);
 			$sheet->setCellValue('B'.$row, $sheet_row[1]);
@@ -1166,7 +1180,7 @@ class Presence extends CI_Controller{
 			$row++;
 		}
 
-		foreach(['A' => 8, 'B' => 30, 'C' => 16, 'D' => 22, 'E' => 18] as $column => $width){
+		foreach(['A' => 18, 'B' => 30, 'C' => 12, 'D' => 22, 'E' => 18] as $column => $width){
 			$sheet->getColumnDimension($column)->setWidth($width);
 		}
 
