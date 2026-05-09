@@ -48,3 +48,4 @@ __MACOSX/
 database/supabase/data.sql
 database/supabase/all.sql
 database/supabase/data_chunks/
+.vercel
