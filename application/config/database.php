@@ -73,22 +73,31 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $active_group = 'default';
 $query_builder = TRUE;
 
+$db_driver = getenv('DB_DRIVER') ?: 'mysqli';
+$db_host = getenv('DB_HOST') ?: 'localhost';
+$db_port = getenv('DB_PORT') ?: '';
+$db_name = getenv('DB_NAME') ?: 'newtiffa_timesheet';
+$db_user = getenv('DB_USER') ?: 'root';
+$db_pass = getenv('DB_PASS');
+$db_pass = ($db_pass === false) ? '' : $db_pass;
+$db_ssl = getenv('DB_SSL') ?: '';
+
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => 'localhost',
-	'username' => 'root',
-	'password' => '',
-	'database' => 'newtiffa_timesheet',
-	'dbdriver' => 'mysqli',
+	'hostname' => $db_port ? $db_host.':'.$db_port : $db_host,
+	'username' => $db_user,
+	'password' => $db_pass,
+	'database' => $db_name,
+	'dbdriver' => $db_driver,
 	'dbprefix' => '',
 	'pconnect' => FALSE,
-	'db_debug' => TRUE,
+	'db_debug' => (ENVIRONMENT !== 'production'),
 	'cache_on' => FALSE,
 	'cachedir' => '',
 	'char_set' => 'utf8',
 	'dbcollat' => 'utf8_general_ci',
 	'swap_pre' => '',
-	'encrypt' => FALSE,
+	'encrypt' => $db_ssl == '1',
 	'compress' => FALSE,
 	'stricton' => FALSE,
 	'failover' => array(),
