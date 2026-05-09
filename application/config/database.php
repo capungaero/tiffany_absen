@@ -84,11 +84,12 @@ $db_ssl = getenv('DB_SSL') ?: '';
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => $db_port ? $db_host.':'.$db_port : $db_host,
+	'hostname' => $db_host,
 	'username' => $db_user,
 	'password' => $db_pass,
 	'database' => $db_name,
 	'dbdriver' => $db_driver,
+	'port' => $db_port ?: '',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
 	'db_debug' => (ENVIRONMENT !== 'production'),
