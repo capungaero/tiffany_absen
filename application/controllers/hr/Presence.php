@@ -1558,10 +1558,20 @@ class Presence extends CI_Controller{
 	}
 
 	private function _apply_attlog_fallback(&$payload, $date, $times){
+		$times = array_values(array_unique($times));
 		sort($times);
+		$count = count($times);
+		if($count == 0){ return; }
+
 		$payload['entry_time'] = $date.' '.$times[0];
-		if(count($times) > 1){
-			$payload['out_time'] = $date.' '.$times[count($times) - 1];
+		if($count == 1){ return; }
+
+		$payload['out_time'] = $date.' '.$times[$count - 1];
+		if($count == 2){ return; }
+
+		$payload['rest_time_in'] = $date.' '.$times[1];
+		if($count >= 4){
+			$payload['rest_time_out'] = $date.' '.$times[2];
 		}
 	}
 
