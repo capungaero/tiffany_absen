@@ -1,0 +1,17 @@
+.git
+.github
+.agents
+.codex
+application/cache/*
+application/logs/*
+uploads/attendance/**
+exports/**
+database/supabase/data.sql
+database/supabase/all.sql
+database/supabase/data_chunks/**
+*.dat
+error_log
+user_guide/**
+__MACOSX/**
+**/__MACOSX/**
+**/._*
