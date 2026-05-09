@@ -43,3 +43,8 @@ uploads/attendance/
 # Mac archive metadata
 __MACOSX/
 ._*
+
+# Generated database conversion data (contains real employee/app data)
+database/supabase/data.sql
+database/supabase/all.sql
+database/supabase/data_chunks/
