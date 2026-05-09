@@ -26,7 +26,7 @@ date_default_timezone_set("Asia/Jakarta");
 | a PHP script and you can easily do that on your own.
 |
 */
-$config['base_url'] = 'http://127.0.0.1:8001/';
+$config['base_url'] = getenv('APP_BASE_URL') ?: 'http://127.0.0.1:8001/';
 
 /*
 |--------------------------------------------------------------------------
@@ -237,7 +237,10 @@ $config['log_threshold'] = 0;
 | application/logs/ directory. Use a full server path with trailing slash.
 |
 */
-$config['log_path'] = '';
+$config['log_path'] = getenv('CI_LOG_PATH') ?: '';
+if(getenv('VERCEL')){
+	$config['log_path'] = '/tmp/';
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -296,7 +299,10 @@ $config['error_views_path'] = '';
 | application/cache/ directory.  Use a full server path with trailing slash.
 |
 */
-$config['cache_path'] = '';
+$config['cache_path'] = getenv('CI_CACHE_PATH') ?: '';
+if(getenv('VERCEL')){
+	$config['cache_path'] = '/tmp/';
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -383,7 +389,10 @@ $config['encryption_key'] = '';
 $config['sess_driver'] = 'files';
 $config['sess_cookie_name'] = 'ci_session';
 $config['sess_expiration'] = 7200;
-$config['sess_save_path'] = NULL;
+$config['sess_save_path'] = getenv('CI_SESSION_PATH') ?: NULL;
+if(getenv('VERCEL')){
+	$config['sess_save_path'] = '/tmp';
+}
 $config['sess_match_ip'] = FALSE;
 $config['sess_time_to_update'] = 300;
 $config['sess_regenerate_destroy'] = FALSE;
